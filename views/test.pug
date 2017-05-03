@@ -1,0 +1,17 @@
+html
+  head
+    title= title
+  body
+    h1= message
+    form(action='/add-person' method='post')
+      div
+        label(for='name') Name:
+        input(type='text' id='name' name='user_name')
+      div
+        label(for='role') Role:
+        select(name='role' id='role')
+          option(value='student') Student
+          option(value='res_instructor') Residential Instructor
+          option(value='teacher') Faculty
+      div.button
+        button(type='submit') Add Person
