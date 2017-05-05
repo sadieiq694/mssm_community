@@ -12,7 +12,36 @@ var connection = mysql.createConnection({ //creating connection to the database
   database : 'mssm_community_2'
 });
 
-connection.connect();
+function addPerson(name, role) {
+  connection.connect();
+
+  connection.query('INSERT INTO people SET ?', {name: name}, function (error, results, fields) { //name = column name, name = value for field
+    if (error) throw error;
+
+    var personId = results.insertId
+
+    connection.query('SELECT role_id FROM roles WHERE name = ?', [role], function (error, results, fields) {
+      if (error) throw error;
+
+      var roleId = results[0].role_id
+
+      connection.query('INSERT INTO user_roles SET ?', {person_id: personId, role_id: roleId}, function (error, results, fields) {
+        if (error) throw error;
+
+        console.log("Apparently it worked")
+      });
+
+      console.log(results[0].role_id)
+    });
+
+    console.log(results.insertId);
+  });
+
+//connection.end();
+
+}
+
+addPerson("Karter", "Student")
 
 /*connection.query('SELECT * FROM `people` JOIN `sign_out` ON people.id = sign_out.student_id', function (error, results, fields) {
   if (error) throw error;
@@ -21,7 +50,7 @@ connection.connect();
   }
 });*/
 
-connection.end();
+//onnection.end();
 
 app.get('/test', function(req, res) {
   res.render('test', {title: 'Hey', message: "Hello there!"}) // 'test' is the name of a template, then fill fields (object w/ properties)
