@@ -1,0 +1,5 @@
+html
+  head
+    title Person Added
+  body
+    a(href='/test') Add Another

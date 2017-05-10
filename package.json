@@ -9,6 +9,7 @@
   "author": "Sadie Allen",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.17.1",
     "express": "^4.15.2",
     "mysql": "^2.13.0",
     "pug": "^2.0.0-rc.1"

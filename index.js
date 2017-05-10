@@ -1,18 +1,22 @@
 var express = require('express') //importing library
 var app = express() //app is an object that gives us access to commands in the express library
+var bodyParser = require('body-parser')
+app.use(bodyParser.json()); //to support JSON-encoed bodies
+app.use(bodyParser.urlencoded({ //to suport URL-encoded bodies
+  extended:true
+}));
 
 var mysql      = require('mysql');
 app.set('views', './views') //pug templates are in the views folder
 app.set('view engine', 'pug') //use pug to render views
 
-var connection = mysql.createConnection({ //creating connection to the database
-  host     : 'localhost',
-  user     : 'sadie.la',
-  password : '12345',
-  database : 'mssm_community_2'
-});
-
 function addPerson(name, role) {
+  var connection = mysql.createConnection({ //creating connection to the database
+    host     : 'localhost',
+    user     : 'sadie.la',
+    password : '12345',
+    database : 'mssm_community_2'
+  });
   connection.connect();
 
   connection.query('INSERT INTO people SET ?', {name: name}, function (error, results, fields) { //name = column name, name = value for field
@@ -29,6 +33,7 @@ function addPerson(name, role) {
         if (error) throw error;
 
         console.log("Apparently it worked")
+        connection.end();
       });
 
       console.log(results[0].role_id)
@@ -41,7 +46,18 @@ function addPerson(name, role) {
 
 }
 
-addPerson("Karter", "Student")
+app.post('/added-person', function(req, res) {
+  var name = req.body.user_name;
+  var role = req.body.role;
+
+  console.log(req.body);
+
+  addPerson(name, role);
+
+  res.render('added-person')
+
+});
+
 
 /*connection.query('SELECT * FROM `people` JOIN `sign_out` ON people.id = sign_out.student_id', function (error, results, fields) {
   if (error) throw error;
