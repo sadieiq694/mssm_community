@@ -54,13 +54,22 @@ function addPerson(name, role) {
 function people_roles(callback) {
   connection = create_connection();
   connection.connect();
-  connection.query('SELECT people.name, roles.name as rolename FROM `people` INNER JOIN `user_roles` on people.id = user_roles.person_id INNER JOIN `roles` on user_roles.role_id = roles.role_id', {}, function(error, results, fields) {
+  connection.query('SELECT people.name, roles.name as rolename FROM `people` INNER JOIN `user_roles` on people.id = user_roles.person_id INNER JOIN `roles` ON user_roles.role_id = roles.role_id', {}, function(error, results, fields) {
     if(error) throw error;
 
     connection.end()
     callback(results);
   });
   //return
+}
+
+function create_event(e_name, e_loc, chap_id, e_start, e_end) {
+  connection = create_connection();
+  connection.connect();
+  connection.query('INSERT INTO events SET ?', {event_name: e_name, event_loc: e_loc, chaperone:chap_id, event_start:e_start,  event_end:e_end}, function (error, results, fields) { //name = column name, name = value for field
+    if(error) throw error;
+
+    connection.end();
 }
 
 
@@ -81,7 +90,7 @@ app.post('/added-person', function(req, res) {
 
   addPerson(name, role);
 
-  res.render('added-person')
+  res.render('added_person')
 
 });
 /*connection.query('SELECT * FROM `people` JOIN `sign_out` ON people.id = sign_out.student_id', function (error, results, fields) {

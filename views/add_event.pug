@@ -1,0 +1,37 @@
+html
+  head
+    title Add Event
+  body
+    h1= message
+    form(action='/added-event' method='post')
+      div
+        label(for='event_name') Event Name
+        input(type='text' id='event_name' name='event_name')
+      div
+        label(for='event_loc') Event Location
+        input(type='text' id='event_name' name='event_name')
+      div
+        label(for='chaperone') Chaperone
+        DROP DOWN
+      div
+        label(for='event_date') Event Date
+        input(type='text' id='event_date' name= 'event_date')
+      div
+        label(for='event_start') Event Start
+        select(name='event_start' id='event_start')
+          option(value='8:00') 8:00am
+          option(value='9:00') 9:00am
+          option(value='10:00') 10:00am
+          option(value='11:00') 11:00am
+          option(value='12:00') 12:00pm
+          option(value='13:00') 1:00pm
+          option(value='14:00') 2:00pm
+          option(value='15:00') 3:00pm
+          option(value='16:00') 4:00pm
+          option(value='17:00') 5:00pm
+          option(value='18:00') 6:00pm
+          option(value='19:00') 7:00pm
+          option(value='2000') 8:00pm
+      div
+        label(for='event_end') Event End
+        DROP DOWN
