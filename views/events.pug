@@ -1,0 +1,13 @@
+html
+  head
+    title Events
+  body
+    table
+      each val in events
+        tr
+          td= val.event_name
+          td= val.event_loc
+          td= val.chaperone
+          td= val.event_date
+          td= val.event_start
+          td= val.event_end

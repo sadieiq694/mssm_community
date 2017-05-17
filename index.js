@@ -51,10 +51,44 @@ function addPerson(name, role) {
 //connection.end();
 }
 
+function addEvent(event_name, event_loc, chaperone, event_date, event_start, event_end) {
+  connection = create_connection();
+  connection.connect();
+  connection.query('INSERT INTO events SET ?', {event_name: event_name, event_loc: event_loc, chaperone: chaperone, event_date: event_date, event_start: event_start, event_end: event_end}, function(error, results, fields) {
+    if (error) throw error;
+    console.log(results[0])
+    connection.end();
+  });
+}
+
 function people_roles(callback) {
   connection = create_connection();
   connection.connect();
   connection.query('SELECT people.name, roles.name as rolename FROM `people` INNER JOIN `user_roles` on people.id = user_roles.person_id INNER JOIN `roles` ON user_roles.role_id = roles.role_id', {}, function(error, results, fields) {
+    if(error) throw error;
+
+    connection.end()
+    callback(results);
+  });
+  //return
+}
+
+function list_events(callback) {
+  connection = create_connection();
+  connection.connect();
+  connection.query('SELECT event_name, event_loc, people.name, event_date, event_start, event_end FROM `events` INNER JOIN `people` on events.chaperone = people.id', {}, function(error, results, fields) {
+    if(error) throw error;
+
+    connection.end()
+    callback(results);
+  });
+  //return
+}
+
+function chaperone_roles(callback) { //variant of people_roles
+  connection = create_connection();
+  connection.connect();
+  connection.query('SELECT people.name, people.id, roles.name as rolename FROM `people` INNER JOIN `user_roles` on people.id = user_roles.person_id INNER JOIN `roles` ON user_roles.role_id = roles.role_id WHERE user_roles.role_id = 2 OR user_roles.role_id = 3', {}, function(error, results, fields) {
     if(error) throw error;
 
     connection.end()
@@ -70,6 +104,7 @@ function create_event(e_name, e_loc, chap_id, e_start, e_end) {
     if(error) throw error;
 
     connection.end();
+});
 }
 
 
@@ -78,6 +113,22 @@ app.get('/people', function(req, res) {
     //console.log(results);
 
     res.render('people', {title: "People and Roles", people: results})
+  });
+});
+
+app.get('/events', function(req, res) { //EDITEDITEDITEDIT
+  list_events(function(results) {
+    //console.log(results);
+
+    res.render('events', {title: "Event List", events: results})
+  });
+});
+
+app.get('/add-event', function(req, res) {
+  chaperone_roles(function(results) {
+    //console.log(results);
+
+    res.render('add_event', {title: "Adding Events", chaperones: results})
   });
 });
 
@@ -93,6 +144,22 @@ app.post('/added-person', function(req, res) {
   res.render('added_person')
 
 });
+
+app.post('/added-event', function(req, res) {
+  var event_name = req.body.event_name;
+  var event_loc = req.body.event_loc;
+  var chaperone = req.body.chaperone;
+  var event_date = req.body.event_date;
+  var event_start = req.body.event_start;
+  var event_end = req.body.event_end;
+
+  console.log(req.body);
+
+  addEvent(event_name, event_loc, chaperone, event_date, event_start, event_end);
+
+  res.render('added_event')
+
+});
 /*connection.query('SELECT * FROM `people` JOIN `sign_out` ON people.id = sign_out.student_id', function (error, results, fields) {
   if (error) throw error;
   for(i = 0; i < results.length;  i++){
@@ -101,10 +168,13 @@ app.post('/added-person', function(req, res) {
 });*/
 //onnection.end();
 
-app.get('/test', function(req, res) {
-  res.render('test', {title: 'Hey', message: "Hello there!"}) // 'test' is the name of a template, then fill fields (object w/ properties)
+app.get('/add-person', function(req, res) {
+  res.render('add_person', {title: 'Hey', message: "Hello there!"}) // 'test' is the name of a template, then fill fields (object w/ properties)
 });
 
+app.get('/home', function(req, res){
+  res.render('home', {title: 'Homepage', message: 'Hey!'})
+});
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*app.get('/', function (req, res) { //this is sent to the webpage, configures webserver
   res.send('Hello World!')
