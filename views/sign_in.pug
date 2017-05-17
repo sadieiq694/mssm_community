@@ -1,0 +1,10 @@
+html
+  head
+    title= title
+    body
+    form(action='/signed-in' method= 'post')
+      div
+      label(for='people') Who are you?
+      select(name='user' id='user')
+        each val in people
+          option(value=val.id) #{val.name}

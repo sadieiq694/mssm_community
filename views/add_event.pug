@@ -22,13 +22,13 @@ html
         label(for='event_start') Event Start
         select(name='event_start' id='event_start')
           - for(var hour = 8; hour <= 24; hour++)
-            option(value= hour) #{hour}:00
-            option(value= hour + .5) #{hour}:30
+            option(value= hour) #{hour>12?hour-12:hour}:00#{hour>12?'pm':'am'}
+            option(value= hour + .5) #{hour>12?hour-12:hour}:30#{hour>12?'pm':'am'}
       div
         label(for='event_end') Event End
         select(name='event_end' id='event_start')
           - for(var hour = 9; hour<= 24; hour++)
-            option(value= hour) #{hour}:00
-            option(value= hour + .5) #{hour}:30
+            option(value= hour) #{hour>12?hour-12:hour}:00#{hour>12?'pm':'am'}
+            option(value= hour + .5) #{hour>12?hour-12:hour}:30#{hour>12?'pm':'am'}
       div.button
         button(type='submit') Add Event

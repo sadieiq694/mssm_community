@@ -1,7 +1,7 @@
 var express = require('express') //importing library
 var app = express() //app is an object that gives us access to commands in the express library
 var bodyParser = require('body-parser')
-app.use(bodyParser.json()); //to support JSON-encoed bodies
+app.use(bodyParser.json()); //to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({ //to suport URL-encoded bodies
   extended:true
 }));
@@ -21,11 +21,11 @@ function create_connection() {
   return connection;
 }
 
-function addPerson(name, role) {
+function addPerson(name, role, email) {
 
   connection = create_connection();
   connection.connect();
-  connection.query('INSERT INTO people SET ?', {name: name}, function (error, results, fields) { //name = column name, name = value for field
+  connection.query('INSERT INTO people SET ?', {name: name, email:email}, function (error, results, fields) { //name = column name, name = value for field
     if (error) throw error;
 
     var personId = results.insertId
@@ -64,7 +64,7 @@ function addEvent(event_name, event_loc, chaperone, event_date, event_start, eve
 function people_roles(callback) {
   connection = create_connection();
   connection.connect();
-  connection.query('SELECT people.name, roles.name as rolename FROM `people` INNER JOIN `user_roles` on people.id = user_roles.person_id INNER JOIN `roles` ON user_roles.role_id = roles.role_id', {}, function(error, results, fields) {
+  connection.query('SELECT people.name, people.email, roles.name as rolename FROM `people` INNER JOIN `user_roles` on people.id = user_roles.person_id INNER JOIN `roles` ON user_roles.role_id = roles.role_id', {}, function(error, results, fields) {
     if(error) throw error;
 
     connection.end()
@@ -132,14 +132,27 @@ app.get('/add-event', function(req, res) {
   });
 });
 
+app.get('/sign-in', function(req, res) {
+  people_roles(function(results) {
+    res.render('sign_in', {title: 'signin', people:results})
+  });
+});
+
+app.post('/signed-in', function(req, res) {
+  var user = req.body.user
+  console.log(req.body)
+  //decide what page to go to based on role
+  res.redirect('home')
+})
 
 app.post('/added-person', function(req, res) {
   var name = req.body.user_name;
   var role = req.body.role;
+  var email = req.body.email;
 
   console.log(req.body);
 
-  addPerson(name, role);
+  addPerson(name, role, email);
 
   res.render('added_person')
 
@@ -171,6 +184,7 @@ app.post('/added-event', function(req, res) {
 app.get('/add-person', function(req, res) {
   res.render('add_person', {title: 'Hey', message: "Hello there!"}) // 'test' is the name of a template, then fill fields (object w/ properties)
 });
+
 
 app.get('/home', function(req, res){
   res.render('home', {title: 'Homepage', message: 'Hey!'})
